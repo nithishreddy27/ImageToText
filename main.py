@@ -18,7 +18,7 @@ async def extract_text(file: UploadFile = File(...)):
         img = Image.open(io.BytesIO(image_bytes))
         
         # Convert image to text
-        text = pytesseract.image_to_string(img)
+        text = pytesseract.image_to_string(img, config="--oem 1 --psm 6")
         
         return {"extracted_text": text}
     except Exception as e:
