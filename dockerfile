@@ -7,6 +7,9 @@ WORKDIR /app
 # Copy the current directory contents into the container at /app
 COPY . /app
 
+# Set non-interactive frontend to avoid prompts
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Install apt dependencies for Tesseract and OpenCV
 RUN apt-get update && apt-get install -y \
     tesseract-ocr \
@@ -18,10 +21,12 @@ RUN apt-get update && apt-get install -y \
     libsm6 \
     libxrender1 \
     libfontconfig1 \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
+
 # Expose the FastAPI default port
 EXPOSE 8000
 
