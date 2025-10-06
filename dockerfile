@@ -1,9 +1,19 @@
-FROM python:3.10
+# Use an official Python runtime as a parent image
+FROM python:3.10-slim
 
+# Set the working directory in the container
 WORKDIR /app
 
+# Copy the current directory contents into the container at /app
 COPY . /app
 
+# Set non-interactive frontend
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Create man directory for Java installation (required for slim images)
+RUN mkdir -p /usr/share/man/man1
+
+# Install apt dependencies for Tesseract and OpenCV
 RUN apt-get update && apt-get install -y \
     tesseract-ocr \
     libtesseract-dev \
@@ -11,10 +21,17 @@ RUN apt-get update && apt-get install -y \
     libglib2.0-0 \
     default-jre \
     poppler-utils \
+    libsm6 \
+    libxrender1 \
+    libfontconfig1 \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Expose the FastAPI default port
 EXPOSE 8000
 
+# Command to run FastAPI server
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
