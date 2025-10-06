@@ -3,8 +3,26 @@ import pytesseract
 from PIL import Image
 import io
 import os
+from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI()
+
+
+ALLOWED_ORIGINS = [
+    "http://localhost:3000",                 # your Next.js dev
+    "https://imagetotext-hp54.onrender.com", # your API origin itself (safe)
+    "https://ycap.in", 
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=False,           # set True only if you need cookies/auth
+    allow_methods=["POST", "OPTIONS"], # OPTIONS is important for preflight
+    allow_headers=["*"],
+)
+
 
 # Set the path to Tesseract-OCR executable
 # pytesseract.pytesseract.tesseract_cmd = "D:\\256SSD\\Tesseract-OCR\\tesseract.exe"
